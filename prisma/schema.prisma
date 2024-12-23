@@ -1,37 +1,48 @@
 generator client {
-   provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-   provider = "postgresql"
-   url      = env("DATABASE_URL")
-}
-
-model User {
-   id        Int      @id @default(autoincrement())
-   email     String   @unique
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
-}
-
-model Dish {
-   id          Int      @id @default(autoincrement())
-   name        String
-   quantity    Int
-   price       Float
-   weight      Float
-   ingredients String[]
-   imageUrl    String?
-   calories    Int?
-   proteins    Float?
-   fats        Float?
-   carbs       Float?
-   category    Category
-   categoryId  Int?
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Category {
-   PELMENI
-   MANTY
-   BLINY
+  PELMENI
+  MANTY
+  BLINY
+  TREUGOLNIKI
+}
+
+model Product {
+  id            Int       @id @default(autoincrement())
+  name          String    // наименование
+  price         Float     // цена
+  weight        Float?    // вес (может быть null)
+  quantity      Int       // количество
+  proteins      Float?    // белки (может быть null)
+  fats          Float?    // жиры (может быть null)
+  carbs         Float?    // углеводы (может быть null)
+  discountPrice Float?    // цена со скидкой (может быть null)
+  filling       String?   // начинка (может быть null)
+  category      Category  // категория (перечисление)
+  
+  cartItems     CartItem[]  // связь с корзиной
+}
+
+model CartItem {
+  id         Int     @id @default(autoincrement())
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id])
+  quantity   Int     // количество товара в корзине
+  cart       Cart    @relation(fields: [cartId], references: [id])
+  cartId     Int
+}
+
+model Cart {
+  id           Int     @id @default(autoincrement())
+  items        CartItem[]
+  totalPrice   Float?  // общая стоимость товаров в корзине (можно вычислять при запросе)
+  createdAt    DateTime @default(now()) // время создания корзины
+  updatedAt    DateTime @updatedAt // последнее обновление корзины
 }
