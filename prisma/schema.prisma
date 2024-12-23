@@ -1,46 +1,48 @@
-
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-}
-
-enum Category {
-  PELMENI
-  MANTY
-  BLINY
-  TREUGOLNIKI
+   provider  = "postgresql"
+   url       = env("POSTGRES_PRISMA_URL")
+   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model Product {
-  id            Int       @id @default(autoincrement())
-  name          String    // наименование
-  price         Float     // цена
-  weight        Float?    // вес (может быть null)
-  quantity      Int       // количество
-  proteins      Float?    // белки (может быть null)
-  fats          Float?    // жиры (может быть null)
-  carbs         Float?    // углеводы (может быть null)
-  discountPrice Float?    // цена со скидкой (может быть null)
-  filling       String?   // начинка (может быть null)
-  category      Category  // категория (перечисление)
-  
-  cartItems     CartItem[]  // связь с корзиной
+   id            Int        @id @default(autoincrement())
+   name          String
+   price         Float
+   weight        Float?
+   quantity      Int
+   proteins      Float?
+   fats          Float?
+   carbs         Float?
+   discountPrice Float?
+   filling       String?
+   category      Category
+   cartItems     CartItem[]
+   image         String
 }
 
 model CartItem {
-  id         Int     @id @default(autoincrement())
-  productId  Int
-  product    Product @relation(fields: [productId], references: [id])
-  quantity   Int     // количество товара в корзине
-  cart       Cart    @relation(fields: [cartId], references: [id])
-  cartId     Int
+   quantity  Int
+   productId Int
+   id        Int     @id @default(autoincrement())
+   cartId    Int
+   cart      Cart    @relation(fields: [cartId], references: [id])
+   product   Product @relation(fields: [productId], references: [id])
 }
 
 model Cart {
-  id           Int     @id @default(autoincrement())
-  items        CartItem[]
-  totalPrice   Float?  // общая стоимость товаров в корзине (можно вычислять при запросе)
-  createdAt    DateTime @default(now()) // время создания корзины
-  updatedAt    DateTime @updatedAt // последнее обновление корзины
+   createdAt  DateTime   @default(now())
+   updatedAt  DateTime   @updatedAt
+   totalPrice Float?
+   id         Int        @id @default(autoincrement())
+   items      CartItem[]
+}
+
+enum Category {
+   PELMENI
+   MANTY
+   TREUGOLNIKI
+   ELESH
+   SIRNIKI
+   GOLYBCI
+   KOTLETA
 }
