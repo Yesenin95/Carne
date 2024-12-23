@@ -1,0 +1,37 @@
+generator client {
+   provider = "prisma-client-js"
+}
+
+datasource db {
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
+}
+
+model User {
+   id        Int      @id @default(autoincrement())
+   email     String   @unique
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+}
+
+model Dish {
+   id          Int      @id @default(autoincrement())
+   name        String
+   quantity    Int
+   price       Float
+   weight      Float
+   ingredients String[]
+   imageUrl    String?
+   calories    Int?
+   proteins    Float?
+   fats        Float?
+   carbs       Float?
+   category    Category
+   categoryId  Int?
+}
+
+enum Category {
+   PELMENI
+   MANTY
+   BLINY
+}
